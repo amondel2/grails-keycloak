@@ -63,7 +63,7 @@ The Grails application uses an embedded H2 in-memory database and does not requi
 Before starting, install:
 
 * Java 21
-* Grails 7.x
+* Grails 8.x
 * PostgreSQL (used by Keycloak)
 * Keycloak 26.x
 
