@@ -1,0 +1,120 @@
+/*
+* This is a manifest file that'll be compiled into application.css, which will include all the files
+* listed below.
+*
+* Any CSS file within this directory can be referenced here using a relative path.
+*
+* You're free to add application-wide styles to this file and they'll appear at the top of the
+* compiled file, but it's generally better to create a new file per style scope.
+*
+*= require webjars/bootstrap/%/dist/css/bootstrap.css
+*= require webjars/bootstrap-icons/%/font/bootstrap-icons.css
+*= require_self
+*/
+:root {
+    color-scheme: light dark;
+
+    --text-color: light-dark(#333, #fff);
+    --background-color: light-dark(#fff, #222);
+    --border-color: light-dark(#ddd, #444);
+    --hover-background-color: light-dark(#f3f4f6, #333);
+}
+
+body {
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.site-header {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.site-nav {
+    max-width: 1320px;
+    margin: auto 180px;
+    padding: 0 12px;
+    min-height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-right: 12px;
+}
+
+.nav-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+}
+
+.nav-link:hover {
+    opacity: 1;
+}
+
+.user-name {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-button {
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+
+    padding: 7px 14px;
+    border-radius: 6px;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    cursor: pointer;
+    transition: background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.logout-button:hover {
+    background-color: var(--hover-background-color);
+}
+
+.login-button {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+
+    background-color: var(--background-color);
+    color: var(--text-color) !important;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+
+    transition: opacity 0.15s ease;
+}
+
+.login-button:hover {
+    opacity: 0.8;
+}
