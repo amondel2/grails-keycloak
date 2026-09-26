@@ -3,6 +3,7 @@ package com.grails.example
 import grails.testing.mixin.integration.Integration
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -31,6 +32,7 @@ import spock.lang.Specification
  */
 @Integration
 @Rollback
+@Import(TestOAuth2ClientConfiguration)
 class AccountControllerIntegrationSpec extends Specification implements SecuredRequestSupport {
 
     @Autowired

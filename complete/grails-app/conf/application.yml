@@ -44,8 +44,8 @@ spring:
         registration:
           keycloak:
             provider: keycloak
-            client-id: ${KEYCLOAK_CLIENT_ID:example-app}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
@@ -54,4 +54,4 @@ spring:
               - email
         provider:
           keycloak:
-            issuer-uri: ${KEYCLOAK_ISSUER:http://localhost:8081/realms/example}
+            issuer-uri: ${KEYCLOAK_ISSUER}
