@@ -1,19 +1,12 @@
 package com.grails.example
 
-import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.mock.web.MockServletContext
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.annotation.Rollback
-import org.springframework.web.context.request.RequestContextHolder
 import spock.lang.Specification
 
 /**
@@ -27,25 +20,27 @@ import spock.lang.Specification
  * UsernamePasswordAuthenticationToken carrying the desired authorities into
  * SecurityContextHolder, then invoking the proxied controller bean directly.
  * The @PreAuthorize interceptor fires against the mocked token, so:
- *   - without a token the action is rejected with AccessDeniedException,
- *   - with ROLE_ADMIN the view resolves and renders admin/index.gsp, and
- *   - with any other role (e.g. ROLE_USER) the action is still denied.
+ *   - with ROLE_ADMIN the action resolves the admin/index.gsp view,
+ *   - with any other role (e.g. ROLE_USER) the action is denied, and
+ *   - with no token at all the action is denied for want of credentials.
+ *
+ * The shared plumbing (mockToken / mockKeycloakUser / bindRequest /
+ * clearAuthContext) lives in SecuredRequestSupport.
  *
  * Run with: ./gradlew :integrationTest --tests '*.AdminControllerIntegrationSpec'
  */
 @Integration
 @Rollback
-class AdminControllerIntegrationSpec extends Specification {
+class AdminControllerIntegrationSpec extends Specification implements SecuredRequestSupport {
 
     @Autowired
     AdminController adminController
 
     void cleanup() {
-        RequestContextHolder.resetRequestAttributes()
-        SecurityContextHolder.clearContext()
+        clearAuthContext()
     }
 
-    void "index renders the admin view for an authenticated user with ROLE_ADMIN"() {
+    void "index resolves the admin view for an authenticated user with ROLE_ADMIN"() {
         given: 'a request to /admin and a mocked token carrying ROLE_ADMIN'
         mockToken([new SimpleGrantedAuthority('ROLE_ADMIN')])
         bindRequest('/admin')
@@ -60,7 +55,7 @@ class AdminControllerIntegrationSpec extends Specification {
 
     void "index rejects an authenticated user with only ROLE_USER"() {
         given: 'a request to /admin and a mocked token carrying only ROLE_USER'
-        mockToken([new SimpleGrantedAuthority('ROLE_USER')])
+        mockKeycloakUser()
         bindRequest('/admin')
 
         when: 'the secured index action runs'
@@ -72,6 +67,7 @@ class AdminControllerIntegrationSpec extends Specification {
 
     void "index rejects an unauthenticated request"() {
         given: 'no authentication token in the security context'
+        clearAuthContext()
         bindRequest('/admin')
 
         when: 'the secured index action runs'
@@ -79,16 +75,5 @@ class AdminControllerIntegrationSpec extends Specification {
 
         then: 'method security denies access'
         thrown(AuthenticationCredentialsNotFoundException)
-    }
-
-    private static void mockToken(List authorities) {
-        SecurityContextHolder.context.authentication =
-                new UsernamePasswordAuthenticationToken('mock-user', 'mock-password', authorities)
-    }
-
-    private static void bindRequest(String uri) {
-        def request = new MockHttpServletRequest('GET', uri)
-        def webRequest = new GrailsWebRequest(request, new MockHttpServletResponse(), new MockServletContext())
-        RequestContextHolder.setRequestAttributes(webRequest)
     }
 }
