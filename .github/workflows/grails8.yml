@@ -45,7 +45,7 @@ jobs:
         if: matrix.app == 'complete'
         working-directory: complete
         run: |
-          ./gradlew bootRun --console=plain > boot.log 2>&1 &
+          ./gradlew bootRun --args='--spring.profiles.active=ci' --console=plain > boot.log 2>&1 &
           APP_PID=$!
           cleanup() { kill "$APP_PID" 2>/dev/null || true; }
           trap cleanup EXIT
